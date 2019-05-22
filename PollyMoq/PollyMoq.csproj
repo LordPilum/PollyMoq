@@ -68,6 +68,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application.cs" />
+    <Compile Include="ContextExtensions.cs" />
+    <Compile Include="PolicyContextKeys.cs" />
+    <Compile Include="PolicyRegistryKeys.cs" />
+    <Compile Include="PollyModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
