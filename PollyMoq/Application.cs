@@ -36,7 +36,7 @@ namespace PollyMoq
         {
             if (_tries++ <= NumberOfFailures)
             {
-                throw new InvalidOperationException($"Derp on the {_tries}. try.");
+                throw new InvalidOperationException($"Fallback entered on the {_tries}. try.");
             }
         }
     }

@@ -15,7 +15,7 @@ namespace PollyMoq
             // Creating a retry policy.
             var retryPolicy = Policy
                 .Handle<Exception>()
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retryCount, context) =>
+                .WaitAndRetry(4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retryCount, context) =>
                 {
                     Console.WriteLine($"Retry {retryCount}");
                 });
