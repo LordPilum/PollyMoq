@@ -1,9 +1,7 @@
 ﻿using System;
 using Autofac;
 using Polly;
-using Polly.Fallback;
 using Polly.Registry;
-using Polly.Retry;
 
 namespace PollyMoq
 {
@@ -25,10 +23,10 @@ namespace PollyMoq
 
             var policy = _policyRegistry.Get<Policy>(PolicyRegistryKeys.Default);
             policy.Execute((ctx) => RetryMe(),
-                new Context("ApplicationContext")
-                    .WithFallbackLogger((ex) =>
+                new PolicyDelegateContext("ApplicationContext")
+                    .WithFallbackAction((ex) =>
                     {
-                        Console.WriteLine("Falling back!");
+                        Console.WriteLine($"Falling back! {ex.Message}");
                     })
             );
 

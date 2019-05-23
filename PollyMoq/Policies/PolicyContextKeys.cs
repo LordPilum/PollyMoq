@@ -4,6 +4,6 @@ namespace PollyMoq
 {
     internal class PolicyContextKeys
     {
-        public static Action<Exception> FallbackAction => null;
+        public static string FallbackAction => "fallbackAction";
     }
 }

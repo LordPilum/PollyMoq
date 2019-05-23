@@ -21,20 +21,24 @@ namespace PollyMoq
                 });
 
 
-            if (PolicyContextKeys.FallbackAction != null)
-            {
-                // Creating a fallback policy to execute a function,
-                // presumably a ServiceEventSource logger.
-                var fallback = Policy
-                    .Handle<Exception>()
-                    .Fallback(
-                        () => { /* Do nothing here. */ },
-                        ex => { PolicyContextKeys.FallbackAction.Invoke(ex); }
-                    );
+            // Creating a fallback policy to execute a function,
+            // presumably a ServiceEventSource logger.
+            var fallback = Policy
+                .Handle<Exception>()
+                .Fallback(
+                    (exception, context, token) => {},
+                    (exception, context) =>
+                    {
+                        if (!(context is PolicyDelegateContext delegateContext))
+                            throw exception;
 
-                // Wrap the fallback policy with the retry policy.
-                retryPolicy.Wrap(fallback);
-            }
+                        if (delegateContext.FallbackAction != null)
+                            delegateContext.FallbackAction.Invoke(exception);
+                    }
+                );
+
+            // Wrap the fallback policy with the retry policy.
+            retryPolicy.Wrap(fallback);
 
             // Adding the retry policy to the registry.
             registry.Add(PolicyRegistryKeys.Default, retryPolicy);

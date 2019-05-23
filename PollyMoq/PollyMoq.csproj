@@ -70,9 +70,10 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="ContextExtensions.cs" />
-    <Compile Include="PolicyContextKeys.cs" />
-    <Compile Include="PolicyRegistryKeys.cs" />
-    <Compile Include="PollyModule.cs" />
+    <Compile Include="Policies\PolicyDelegateContext.cs" />
+    <Compile Include="Policies\PolicyContextKeys.cs" />
+    <Compile Include="Policies\PolicyRegistryKeys.cs" />
+    <Compile Include="Policies\PollyModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
