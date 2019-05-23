@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
-    <Compile Include="ContextExtensions.cs" />
     <Compile Include="Policies\PolicyDelegateContext.cs" />
     <Compile Include="Policies\PolicyContextKeys.cs" />
     <Compile Include="Policies\PolicyRegistryKeys.cs" />
