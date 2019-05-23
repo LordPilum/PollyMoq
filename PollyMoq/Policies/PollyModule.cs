@@ -17,7 +17,7 @@ namespace PollyMoq
                 .Handle<Exception>()
                 .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retryCount, context) =>
                 {
-                    Console.WriteLine("Foo");
+                    Console.WriteLine($"Retry {retryCount}");
                 });
 
 
@@ -38,10 +38,10 @@ namespace PollyMoq
                 );
 
             // Wrap the fallback policy with the retry policy.
-            retryPolicy.Wrap(fallback);
+            var combinedPolicy = fallback.Wrap(retryPolicy);
 
             // Adding the retry policy to the registry.
-            registry.Add(PolicyRegistryKeys.Default, retryPolicy);
+            registry.Add(PolicyRegistryKeys.Default, combinedPolicy);
 
             // Register the policy registry with the container builder.
             builder.RegisterInstance(registry).As<IReadOnlyPolicyRegistry<string>>();

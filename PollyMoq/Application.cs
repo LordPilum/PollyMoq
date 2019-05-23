@@ -7,9 +7,8 @@ namespace PollyMoq
 {
     public class Application : IStartable
     {
-        const int numberOfRetries = 3;
-        const int numberOfFailures = 5;
-        static int tries = 0;
+        private const int NumberOfFailures = 5;
+        private static int _tries = 0;
         private IReadOnlyPolicyRegistry<string> _policyRegistry;
 
         public Application(IReadOnlyPolicyRegistry<string> policyRegistry)
@@ -19,28 +18,26 @@ namespace PollyMoq
 
         public void Start()
         {
-            Console.WriteLine("Run, baby, run!");
+            Console.WriteLine("Executing application!");
 
             var policy = _policyRegistry.Get<Policy>(PolicyRegistryKeys.Default);
             policy.Execute((ctx) => RetryMe(),
                 new PolicyDelegateContext("ApplicationContext")
                     .WithFallbackAction((ex) =>
                     {
-                        Console.WriteLine($"Falling back! {ex.Message}");
+                        Console.WriteLine($"Invoking fallback! {ex.Message}");
                     })
             );
 
             Console.ReadKey();
         }
 
-        public static string RetryMe()
+        public static void RetryMe()
         {
-            if (tries++ <= numberOfFailures)
+            if (_tries++ <= NumberOfFailures)
             {
-                throw new InvalidOperationException($"Derp on the {tries}. try.");
+                throw new InvalidOperationException($"Derp on the {_tries}. try.");
             }
-
-            return "How did I end up here?";
         }
     }
 }
