@@ -15,7 +15,9 @@ namespace PollyMoq.Moq
             var policyRegistry = new PolicyRegistry {{PolicyRegistryKeys.Default, Policy.NoOpAsync()}};
 
             var app = new Mock<Application>(policyRegistry);
-            app.Object.Start();
+            //app.Object.Start();
+
+            app.Verify(s => s.Start());
         }
     }
 }
