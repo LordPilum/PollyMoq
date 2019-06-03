@@ -20,6 +20,13 @@ namespace PollyMoq
                     Console.WriteLine($"Retry {retryCount}");
                 });
 
+            var retryPolicyStr = Policy<string>
+                .Handle<Exception>()
+                .WaitAndRetry(4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retryCount, context) =>
+                {
+                    Console.WriteLine($"Retry {retryCount}");
+                });
+
 
             // Creating a fallback policy to execute a function,
             // presumably a ServiceEventSource logger.
@@ -32,16 +39,31 @@ namespace PollyMoq
                         if (!(context is PolicyDelegateContext delegateContext))
                             throw exception;
 
-                        if (delegateContext.FallbackAction != null)
-                            delegateContext.FallbackAction.Invoke(exception);
+                        delegateContext.FallbackAction?.Invoke(exception);
                     }
                 );
 
             // Wrap the fallback policy with the retry policy.
-            var combinedPolicy = fallback.Wrap(retryPolicy);
+            var defaultPolicy = fallback.Wrap(retryPolicy);
 
-            // Adding the retry policy to the registry.
-            registry.Add(PolicyRegistryKeys.Default, combinedPolicy);
+            // Creating a fallback policy for void,
+            // and wrapping it with the retry policy.
+            var stringPolicy = Policy<string>
+                .Handle<Exception>()
+                .Fallback(
+                    (exception, context, token) => string.Empty,
+                    (result, context) =>
+                    {
+                        if (!(context is PolicyDelegateContext delegateContext))
+                            throw result.Exception;
+
+                        delegateContext.FallbackAction?.Invoke(result.Exception);
+                    }
+                ).Wrap(retryPolicyStr);
+
+            // Adding the retry policies to the registry.
+            registry.Add(PolicyRegistryKeys.Default, defaultPolicy);
+            registry.Add(PolicyRegistryKeys.String, stringPolicy);
 
             // Register the policy registry with the container builder.
             builder.RegisterInstance(registry).As<IReadOnlyPolicyRegistry<string>>();
